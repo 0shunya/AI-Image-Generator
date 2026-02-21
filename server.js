@@ -1,8 +1,24 @@
 const express = require("express");
-const router = express.Router();
-const authMiddleware = require("../middleware/authMiddleware");
-const { generateImage } = require("../controllers/imageController");
+require("dotenv").config();
 
-router.post("/generate", authMiddleware, generateImage);
+const connectDB = require("./config/db.js");
+const authRoutes = require("./routes/authRoutes.js");
+const imageRoutes = require("./routes/imageRoutes.js");
 
-module.exports = router;
+const app = express();
+const PORT = 5000;
+
+// Connect Database
+connectDB();
+
+// Middleware
+app.use(express.json());
+
+// Routes
+app.use("/api/auth", authRoutes);
+app.use("/api/image", imageRoutes);
+
+// Start server
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+});
