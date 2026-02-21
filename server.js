@@ -1,12 +1,18 @@
 const express = require("express");
 const axios = require("axios");
 require("dotenv").config();
+const FormData = require("form-data");
+const mongoose = require("mongoose")
 
 const app = express();
 const PORT = 5000;
 
 // Middleware to parse JSON body
 app.use(express.json());
+
+mongoose.connect(process.env.mongoose.MONGO_URI)
+  .then(()=> console.log("MongoDB Connected"))
+  .catch(err => console.error("Mongo Error: ", err));
 
 // Root Route
 app.get("/", (req, res) => {
@@ -18,52 +24,48 @@ app.post("/generate", async (req, res) => {
   try {
     const { prompt } = req.body;
 
-    console.log("Received Prompt:", prompt);
-
-    // Validate prompt
-    if (!prompt || typeof prompt !== "string" || prompt.trim().length < 3) {
+    if (!prompt || prompt.trim().length < 3) {
       return res.status(400).json({
         success: false,
-        message: "Valid prompt is required (min 3 characters)"
+        message: "Valid prompt is required"
       });
     }
 
-    // Check API key exists
-    if (!process.env.CLIPDROP_API_KEY) {
-      return res.status(500).json({
-        success: false,
-        message: "API key not found. Check your .env file"
-      });
-    }
+    const FormData = require("form-data");
+    const form = new FormData();
+    form.append("prompt", prompt);
 
-    // Call Clipdrop API
     const response = await axios.post(
       "https://clipdrop-api.co/text-to-image/v1",
-      { prompt: prompt },
+      form,
       {
         headers: {
           "x-api-key": process.env.CLIPDROP_API_KEY,
-          "Content-Type": "application/json"
+          ...form.getHeaders(),
         },
-        responseType: "arraybuffer" // IMPORTANT for image data
+        responseType: "arraybuffer",
       }
     );
 
-    // Convert binary image to base64
     const base64Image = Buffer.from(response.data).toString("base64");
 
-    // Send image back to frontend
     res.json({
       success: true,
       image: `data:image/png;base64,${base64Image}`
     });
 
   } catch (error) {
-    console.error("FULL ERROR:", error.response?.data || error.message);
+    let errorMessage = "Image generation failed";
+
+    if (error.response?.data) {
+      errorMessage = Buffer.from(error.response.data).toString("utf-8");
+    }
+
+    console.error("REAL ERROR:", errorMessage);
 
     res.status(500).json({
       success: false,
-      message: error.response?.data || error.message || "Image generation failed"
+      message: errorMessage
     });
   }
 });
