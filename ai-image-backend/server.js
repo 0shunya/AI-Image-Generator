@@ -16,7 +16,7 @@ connectDB();
 app.use(express.json());
 
 app.use(cors({
-  origin: 'https://ai-image-generator-jbo2.vercel.app/',
+  origin: 'https://ai-image-generator-jbo2.vercel.app',
   methods: ['GET', 'POST'],
   credentials: true
 }))
