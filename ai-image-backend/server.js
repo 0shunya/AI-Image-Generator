@@ -12,14 +12,14 @@ const PORT = 5000;
 // Connect Database
 connectDB();
 
-// Middleware
-app.use(express.json());
-
 app.use(cors({
   origin: 'https://ai-image-generator-jbo2.vercel.app',
   methods: ['GET', 'POST'],
   credentials: true
 }))
+
+// Middleware
+app.use(express.json());
 
 // Routes
 app.use("/api/auth", authRoutes);
