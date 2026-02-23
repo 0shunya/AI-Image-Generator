@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const api = axios.create({
-  baseURL: 'https://ai-image-generator-neon-eight.vercel.app/api',
+  baseURL: 'https://ai-image-generator-git-master-eights-projects-e676a7de.vercel.app/api',
   headers: {
     'Content-Type': 'application/json',
   },
