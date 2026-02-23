@@ -13,7 +13,11 @@ const PORT = 5000;
 connectDB();
 
 app.use(cors({
-  origin: 'https://ai-image-generator-jbo2.vercel.app',
+  origin: [
+    'https://ai-image-generator-jbo2.vercel.app',           // ✅ no trailing space
+    'https://ai-image-generator-jbo2-git-master-eights-projects-e676a7de.vercel.app',  // ✅ no trailing space
+    'https://ai-image-generator-git-master-eights-projects-e676a7de.vercel.app'        // ✅ add this if needed
+  ],
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
