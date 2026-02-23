@@ -14,9 +14,13 @@ connectDB();
 
 app.use(cors({
   origin: 'https://ai-image-generator-jbo2.vercel.app',
-  methods: ['GET', 'POST'],
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
 }))
+
+// Handle preflight
+app.options('*', cors())
 
 // Middleware
 app.use(express.json());
